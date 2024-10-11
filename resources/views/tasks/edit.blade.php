@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Task</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -25,19 +35,31 @@
             <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $task->description) }}</textarea>
         </div>
 
-        <div class="mb-3 form-check">
-            <input type="hidden" name="is_completed" value="0">  <!-- Hidden input for unchecked state -->
-            <input type="checkbox" name="is_completed" id="is_completed" class="form-check-input" value="1" {{ $task->is_completed ? 'checked' : '' }}>
-            <label for="is_completed" class="form-check-label">Completed</label>
+        <!-- Status Dropdown -->
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-control">
+                <option value="Pending" {{ $task->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                <option value="Completed" {{ $task->status == 'Completed' ? 'selected' : '' }}>Completed</option>
+            </select>
         </div>
-        
+
+        <!-- Due Date Field -->
+        <div class="mb-3">
+            <label for="due_date" class="form-label">Due Date</label>
+            <input type="date" name="due_date" id="due_date" class="form-control" value="{{ old('due_date', $task->due_date ? $task->due_date->format('Y-m-d') : '') }}">
+        </div>
         
         <button type="submit" class="btn btn-primary">Update Task</button>
         <a href="{{ route('tasks.index') }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Task Manager. All rights reserved.</p>
+</footer>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-@include('partials.footer')

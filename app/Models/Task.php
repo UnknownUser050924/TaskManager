@@ -13,12 +13,14 @@ class Task extends Model
     protected $fillable = [
         'title',
         'description',
-        'is_completed',
+        'status',
+        'due_date',
     ];
 
     // Optionally, you can cast attributes to specific data types
     protected $casts = [
-        'is_completed' => 'boolean',
+        'status' => 'string',            // Casting status as string
+        'due_date' => 'date',            // Casting due_date as date
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

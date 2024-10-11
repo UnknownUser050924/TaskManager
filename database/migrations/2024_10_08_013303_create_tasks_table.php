@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('title');                // Task title
-            $table->text('description')->nullable(); // Task description, optional
-            $table->boolean('is_completed')->default(false); // Task completion status
-            $table->timestamps();                    // Created at & updated at timestamps
+            $table->string('title');                      // Task title
+            $table->text('description')->nullable();      // Task description, optional
+            $table->string('status')->default('Pending'); // Task status (Pending or Completed)
+            $table->date('due_date')->nullable();         // Task due date, optional
+            $table->timestamps();                        // Created at & updated at timestamps
         });
     }
 

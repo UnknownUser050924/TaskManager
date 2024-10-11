@@ -9,3 +9,5 @@ Route::get('/', function () {
 
 // Resource route for tasks
 Route::resource('tasks', TaskController::class);
+
+Route::post('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.markComplete');

@@ -26,12 +26,14 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'due_date' => 'nullable|date',
         ]);
 
         $task = new Task;
         $task->title = $request->input('title');
         $task->description = $request->input('description');
-        $task->is_completed = false;
+        $task->status = 'Pending'; // Default status as 'Pending'
+        $task->due_date = $request->input('due_date'); // Store due date
         $task->save();
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
@@ -63,27 +65,43 @@ class TaskController extends Controller
 
     // Update the specified task in storage
     public function update(Request $request, $id)
-{
-    $task = Task::find($id);
+    {
+        $task = Task::find($id);
 
-    if (!$task) {
-        return redirect()->route('tasks.index')->with('error', 'Task not found');
+        if (!$task) {
+            return redirect()->route('tasks.index')->with('error', 'Task not found');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|string|in:Pending,Completed', // Validate status
+            'due_date' => 'nullable|date',
+        ]);
+
+        $task->title = $request->input('title', $task->title);
+        $task->description = $request->input('description', $task->description);
+        $task->status = $request->input('status', $task->status); // Update status
+        $task->due_date = $request->input('due_date', $task->due_date); // Update due date
+        $task->save();
+
+        return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
 
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'is_completed' => 'boolean',
-    ]);
+    // Mark the specified task as completed
+    public function markAsComplete($id)
+    {
+        $task = Task::find($id);
 
-    $task->title = $request->input('title', $task->title);
-    $task->description = $request->input('description', $task->description);
-    $task->is_completed = $request->input('is_completed', $task->is_completed);
-    $task->save();
+        if (!$task) {
+            return redirect()->route('tasks.index')->with('error', 'Task not found');
+        }
 
-    return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
-}
+        $task->status = 'Completed'; // Set status to 'Completed'
+        $task->save();
 
+        return redirect()->route('tasks.index')->with('success', 'Task marked as complete!');
+    }
 
     // Remove the specified task from storage
     public function destroy($id)

@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,6 +29,7 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Status</th>
+                <th>Due Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -28,14 +39,26 @@
                     <td>{{ $task->id }}</td>
                     <td>{{ $task->title }}</td>
                     <td>{{ $task->description }}</td>
-                    <td>{{ $task->is_completed ? 'Completed' : 'Pending' }}</td>
+                    <td>{{ $task->status }}</td>
+                    <td>{{ $task->due_date ? $task->due_date->format('Y-m-d') : 'No due date' }}</td>
                     <td>
+                        <!-- Edit button -->
                         <a href="{{ url('tasks/'.$task->id.'/edit') }}" class="btn btn-warning btn-sm">Edit</a>
+
+                        <!-- Delete form -->
                         <form action="{{ url('tasks/'.$task->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?');">Delete</button>
                         </form>
+
+                        <!-- Mark as Complete button -->
+                        @if($task->status == 'Pending')
+                            <form action="{{ url('tasks/'.$task->id.'/complete') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="btn btn-success btn-sm">Mark as Complete</button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -43,7 +66,11 @@
     </table>
 </div>
 
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Task Manager. All rights reserved.</p>
+</footer>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-@include('partials.footer')
